@@ -1,14 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
-using System.Media;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
 using System.Timers;
 using System.Windows.Media;
 
@@ -18,8 +12,12 @@ namespace XboxStandbyFukker
     {
         private readonly Timer _timer = new Timer();
         private readonly EventLog _log = new EventLog();
+
         private const string EVENT_SOURCE = "Xbox-Standby-Fukker";
         private const string EVENT_LOG = "Application";
+        
+        private static readonly string AUDIO_PATH = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Resources", "8khz.wav");
+        private static readonly TimeSpan INTERVAL = new TimeSpan(0, 0, 3, 0); // 3 minutes
         private static readonly string[] XBOX_HWIDS = new[]
         {
             @"USB\VID_045E&PID_0B17&IGA_00"
@@ -32,12 +30,6 @@ namespace XboxStandbyFukker
             if (!EventLog.SourceExists(EVENT_SOURCE))
             {
                 EventLog.CreateEventSource(EVENT_SOURCE, EVENT_LOG);
-            }
-
-            while (true)
-            {
-                PlaySound();
-                System.Threading.Thread.Sleep(500);
             }
 
             _log.Source = EVENT_SOURCE;
@@ -66,29 +58,21 @@ namespace XboxStandbyFukker
 
             return false;
         }
-
         private void PlaySound()
         {
-            string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Resources", "8khz.wav");
+            _log.WriteEntry("Playing sound to keep Xbox Wireless Headset alive.", EventLogEntryType.Information);
             var player = new MediaPlayer();
-            player.Open(new Uri(path));
+            player.Open(new Uri(AUDIO_PATH));
             player.Volume = 0.01;
             player.Play();
         }
-
         private void Check(object sender, ElapsedEventArgs e)
         {
             try
             {
-                _log.WriteEntry($"Trigger check: {DateTime.Now:HH-mm-ss.ff}", EventLogEntryType.Information);
                 if (IsHeadsetConnected())
                 {
-                    _log.WriteEntry("Headset is connected!", EventLogEntryType.Information);
                     PlaySound();
-                }
-                else
-                {
-                    _log.WriteEntry("Headset is not connected.", EventLogEntryType.Information);
                 }
             }
             catch (Exception ex)
@@ -100,12 +84,10 @@ namespace XboxStandbyFukker
         protected override void OnStart(string[] args)
         {
             _log.WriteEntry("Startup Xbox Standby Fukker.", EventLogEntryType.Information);
-            //_timer.Interval = 240000;
-            _timer.Interval = 2500;
+            _timer.Interval = INTERVAL.TotalMilliseconds;
             _timer.Elapsed += Check;
             _timer.Start();
         }
-
         protected override void OnStop()
         {
             _log.WriteEntry("Shutdown Xbox Standby Fukker.", EventLogEntryType.Information);
