@@ -9,13 +9,15 @@ using System.Media;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using System.Timers;
 using System.Windows.Media;
 
 namespace XboxStandbyFukker
 {
     public partial class XboxStandbyFukkerService : ServiceBase
     {
-        private readonly EventLog Log = new EventLog();
+        private readonly Timer _timer = new Timer();
+        private readonly EventLog _log = new EventLog();
         private const string EVENT_SOURCE = "Xbox-Standby-Fukker";
         private const string EVENT_LOG = "Application";
         private static readonly string[] XBOX_HWIDS = new[]
@@ -38,10 +40,8 @@ namespace XboxStandbyFukker
                 System.Threading.Thread.Sleep(500);
             }
 
-            Log.Source = EVENT_SOURCE;
-            Log.Log = EVENT_LOG;
-
-            bool test = IsHeadsetConnected();
+            _log.Source = EVENT_SOURCE;
+            _log.Log = EVENT_LOG;
 
             InitializeComponent();
         }
@@ -71,20 +71,46 @@ namespace XboxStandbyFukker
         {
             string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Resources", "8khz.wav");
             var player = new MediaPlayer();
-
             player.Open(new Uri(path));
             player.Volume = 0.01;
             player.Play();
         }
 
+        private void Check(object sender, ElapsedEventArgs e)
+        {
+            try
+            {
+                _log.WriteEntry($"Trigger check: {DateTime.Now:HH-mm-ss.ff}", EventLogEntryType.Information);
+                if (IsHeadsetConnected())
+                {
+                    _log.WriteEntry("Headset is connected!", EventLogEntryType.Information);
+                    PlaySound();
+                }
+                else
+                {
+                    _log.WriteEntry("Headset is not connected.", EventLogEntryType.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                _log.WriteEntry($"Exception occurred: {ex.Message}{Environment.NewLine}StackTrace: {ex.StackTrace}", EventLogEntryType.Error);
+            }
+        }
+
         protected override void OnStart(string[] args)
         {
-            Log.WriteEntry("Startup Xbox Standby Fukker.", EventLogEntryType.Information);
+            _log.WriteEntry("Startup Xbox Standby Fukker.", EventLogEntryType.Information);
+            //_timer.Interval = 240000;
+            _timer.Interval = 2500;
+            _timer.Elapsed += Check;
+            _timer.Start();
         }
 
         protected override void OnStop()
         {
-            Log.WriteEntry("Shutdown Xbox Standby Fukker.", EventLogEntryType.Information);
+            _log.WriteEntry("Shutdown Xbox Standby Fukker.", EventLogEntryType.Information);
+            _timer.Stop();
+            _timer.Elapsed -= Check;
         }
     }
 }
