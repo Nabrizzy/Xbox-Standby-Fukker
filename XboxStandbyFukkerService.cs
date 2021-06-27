@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
@@ -16,12 +17,9 @@ namespace XboxStandbyFukker
         private const string EVENT_SOURCE = "XboxStandbyFukker";
         private const string EVENT_LOG = "Application";
 
-        private static readonly string AUDIO_PATH = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources", "40khz.wav");
-        private static readonly TimeSpan INTERVAL = new TimeSpan(0, 0, 3, 0); // 3 minutes
-        private static readonly string[] XBOX_HWIDS = new[]
-        {
-            @"USB\VID_045E&PID_0B17&IGA_00"
-        };
+        private static readonly string AUDIO_PATH = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "sound.wav");
+        private static readonly TimeSpan INTERVAL = new TimeSpan(0, 0, 3, 0);
+        private static readonly string[] XBOX_HWIDS = ConfigurationManager.AppSettings["HardwareIds"].Split(';');
 
         public XboxStandbyFukkerService()
         {
@@ -62,7 +60,6 @@ namespace XboxStandbyFukker
         {
             _log.WriteEntry("Playing sound to keep Xbox Wireless Headset alive.", EventLogEntryType.Information);
             var player = new MediaPlayer();
-            _log.WriteEntry("Sound located at: " + AUDIO_PATH);
             player.Open(new Uri(AUDIO_PATH));
             player.Volume = 0.02;
             player.Play();
@@ -88,6 +85,7 @@ namespace XboxStandbyFukker
             _timer.Interval = INTERVAL.TotalMilliseconds;
             _timer.Elapsed += Check;
             _timer.Start();
+            Check(this, null);
         }
         protected override void OnStop()
         {
