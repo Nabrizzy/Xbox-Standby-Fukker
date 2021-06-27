@@ -27,17 +27,18 @@ namespace XboxStandbyFukker
 
             Log.Source = EVENT_SOURCE;
             Log.Log = EVENT_LOG;
-            Log.WriteEntry("Initialize Xbox Standby Fukker", EventLogEntryType.Information);
 
             InitializeComponent();
         }
 
         protected override void OnStart(string[] args)
         {
+            Log.WriteEntry("Startup Xbox Standby Fukker.", EventLogEntryType.Information);
         }
 
         protected override void OnStop()
         {
+            Log.WriteEntry("Shutdown Xbox Standby Fukker.", EventLogEntryType.Information);
         }
     }
 }
