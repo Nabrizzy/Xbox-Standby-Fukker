@@ -1,7 +1,7 @@
 ﻿
 namespace XboxStandbyFukker
 {
-    partial class Service1
+    partial class XboxStandbyFukkerService
     {
         /// <summary> 
         /// Erforderliche Designervariable.

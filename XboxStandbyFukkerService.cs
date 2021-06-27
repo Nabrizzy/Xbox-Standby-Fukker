@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace XboxStandbyFukker
 {
-    public partial class Service1 : ServiceBase
+    public partial class XboxStandbyFukkerService : ServiceBase
     {
-        public Service1()
+        public XboxStandbyFukkerService()
         {
             InitializeComponent();
         }

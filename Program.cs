@@ -9,15 +9,12 @@ namespace XboxStandbyFukker
 {
     static class Program
     {
-        /// <summary>
-        /// Der Haupteinstiegspunkt für die Anwendung.
-        /// </summary>
         static void Main()
         {
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new Service1()
+                new XboxStandbyFukkerService()
             };
             ServiceBase.Run(ServicesToRun);
         }
