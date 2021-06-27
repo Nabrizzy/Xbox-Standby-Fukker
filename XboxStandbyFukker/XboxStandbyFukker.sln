@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31105.61
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XboxStandbyFukker", "XboxStandbyFukker.csproj", "{84B9C352-B698-48E2-9EBB-C1EF95BDF499}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84B9C352-B698-48E2-9EBB-C1EF95BDF499}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84B9C352-B698-48E2-9EBB-C1EF95BDF499}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84B9C352-B698-48E2-9EBB-C1EF95BDF499}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84B9C352-B698-48E2-9EBB-C1EF95BDF499}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5D744FC6-87F2-4C7B-B793-34558E0F72D7}
+	EndGlobalSection
+EndGlobal
