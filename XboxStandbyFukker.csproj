@@ -6,6 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{84B9C352-B698-48E2-9EBB-C1EF95BDF499}</ProjectGuid>
     <OutputType>WinExe</OutputType>
+    <LangVersion>9.0</LangVersion>
     <RootNamespace>XboxStandbyFukker</RootNamespace>
     <AssemblyName>XboxStandbyFukker</AssemblyName>
     <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
@@ -35,6 +36,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
