@@ -13,10 +13,10 @@ namespace XboxStandbyFukker
         private readonly Timer _timer = new Timer();
         private readonly EventLog _log = new EventLog();
 
-        private const string EVENT_SOURCE = "Xbox-Standby-Fukker";
+        private const string EVENT_SOURCE = "XboxStandbyFukker";
         private const string EVENT_LOG = "Application";
-        
-        private static readonly string AUDIO_PATH = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Resources", "8khz.wav");
+
+        private static readonly string AUDIO_PATH = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "Resources", "40khz.wav");
         private static readonly TimeSpan INTERVAL = new TimeSpan(0, 0, 3, 0); // 3 minutes
         private static readonly string[] XBOX_HWIDS = new[]
         {
@@ -62,8 +62,9 @@ namespace XboxStandbyFukker
         {
             _log.WriteEntry("Playing sound to keep Xbox Wireless Headset alive.", EventLogEntryType.Information);
             var player = new MediaPlayer();
+            _log.WriteEntry("Sound located at: " + AUDIO_PATH);
             player.Open(new Uri(AUDIO_PATH));
-            player.Volume = 0.01;
+            player.Volume = 0.02;
             player.Play();
         }
         private void Check(object sender, ElapsedEventArgs e)
