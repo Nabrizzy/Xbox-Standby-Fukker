@@ -5,9 +5,11 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Management;
+using System.Media;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace XboxStandbyFukker
 {
@@ -28,6 +30,12 @@ namespace XboxStandbyFukker
             if (!EventLog.SourceExists(EVENT_SOURCE))
             {
                 EventLog.CreateEventSource(EVENT_SOURCE, EVENT_LOG);
+            }
+
+            while (true)
+            {
+                PlaySound();
+                System.Threading.Thread.Sleep(500);
             }
 
             Log.Source = EVENT_SOURCE;
@@ -57,6 +65,16 @@ namespace XboxStandbyFukker
             }
 
             return false;
+        }
+
+        private void PlaySound()
+        {
+            string path = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Resources", "8khz.wav");
+            var player = new MediaPlayer();
+
+            player.Open(new Uri(path));
+            player.Volume = 0.01;
+            player.Play();
         }
 
         protected override void OnStart(string[] args)
