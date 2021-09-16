@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Configuration;
 using System.Diagnostics;
-using System.Linq;
-using System.Management;
+using System.IO;
+using System.Reflection;
 using System.ServiceProcess;
 using System.Timers;
 using System.Windows.Media;
@@ -16,10 +16,21 @@ namespace XboxStandbyFukker
 
         private const string EVENT_SOURCE = "XboxStandbyFukker";
         private const string EVENT_LOG = "Application";
+        private const string HELPER_ARGS = "-f \"%d;%ws\"";
 
-        private static readonly string AUDIO_PATH = System.IO.Path.Combine(System.IO.Path.GetDirectoryName(System.Reflection.Assembly.GetExecutingAssembly().Location), "sound.wav");
+        private static readonly string AUDIO_PATH = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "sound.wav");
         private static readonly TimeSpan INTERVAL = new TimeSpan(0, 0, 3, 0);
-        private static readonly string[] XBOX_HWIDS = ConfigurationManager.AppSettings["HardwareIds"].Split(';');
+        private static readonly string HELPER_PATH = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "helper.exe");
+        private static readonly string DEVICE_NAME_COMPARER = ConfigurationManager.AppSettings["DeviceName"].ToLower();
+        private static readonly bool WRITE_LOGS = bool.Parse(ConfigurationManager.AppSettings["WriteLogs"]);
+        private static readonly ProcessStartInfo PROCESS_START_INTO = new ProcessStartInfo()
+        {
+            UseShellExecute = false,
+            RedirectStandardOutput = true,
+            CreateNoWindow = true,
+            FileName = HELPER_PATH,
+            Arguments = HELPER_ARGS
+        };
 
         public XboxStandbyFukkerService()
         {
@@ -33,32 +44,23 @@ namespace XboxStandbyFukker
             _log.Source = EVENT_SOURCE;
             _log.Log = EVENT_LOG;
 
+            IsHeadsetConnected();
+
             InitializeComponent();
         }
 
         private bool IsHeadsetConnected()
         {
-            var searcher = new ManagementObjectSearcher("SELECT * FROM Win32_SoundDevice");
-            var collection = searcher.Get();
-
-            foreach (var obj in collection)
-            {
-                foreach (var prop in obj.Properties)
-                {
-                    if (prop?.Value is not null
-                        && prop.Value is string value
-                        && XBOX_HWIDS.Any(x => value.Contains(x)))
-                    {
-                        return true;
-                    }
-                }
-            }
-
-            return false;
+            Process process = Process.Start(PROCESS_START_INTO);
+            process.WaitForExit();
+            return process.StandardOutput.ReadToEnd().ToLower().Contains(DEVICE_NAME_COMPARER);
         }
         private void PlaySound()
         {
-            _log.WriteEntry("Playing sound to keep Xbox Wireless Headset alive.", EventLogEntryType.Information);
+            if (WRITE_LOGS)
+            {
+                _log.WriteEntry("Playing sound to keep Xbox Wireless Headset alive.", EventLogEntryType.Information);
+            }
             var player = new MediaPlayer();
             player.Open(new Uri(AUDIO_PATH));
             player.Volume = 0.02;
@@ -81,7 +83,10 @@ namespace XboxStandbyFukker
 
         protected override void OnStart(string[] args)
         {
-            _log.WriteEntry("Startup Xbox Standby Fukker.", EventLogEntryType.Information);
+            if (WRITE_LOGS)
+            {
+                _log.WriteEntry("Startup Xbox Standby Fukker.", EventLogEntryType.Information);
+            }
             _timer.Interval = INTERVAL.TotalMilliseconds;
             _timer.Elapsed += Check;
             _timer.Start();
@@ -89,7 +94,10 @@ namespace XboxStandbyFukker
         }
         protected override void OnStop()
         {
-            _log.WriteEntry("Shutdown Xbox Standby Fukker.", EventLogEntryType.Information);
+            if (WRITE_LOGS)
+            {
+                _log.WriteEntry("Shutdown Xbox Standby Fukker.", EventLogEntryType.Information);
+            }
             _timer.Stop();
             _timer.Elapsed -= Check;
         }

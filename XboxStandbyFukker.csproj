@@ -51,10 +51,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>D4C6A2F4A7BBC285AC93023D13ADEE6487B42FA5</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>0C7C8E5050980AF455CD6310D22E47FD8F3FD0AE</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>XboxStandbyFukker_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>XboxStandbyFukker_2_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -92,6 +92,7 @@
     <None Include="install.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="XboxStandbyFukker_2_TemporaryKey.pfx" />
     <None Include="XboxStandbyFukker_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
@@ -107,6 +108,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="helper.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="ReadMe.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
