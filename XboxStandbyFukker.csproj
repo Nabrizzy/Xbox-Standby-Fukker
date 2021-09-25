@@ -51,10 +51,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>0C7C8E5050980AF455CD6310D22E47FD8F3FD0AE</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>B2A1057C278D9E2FC3ED397589DC46E1D5B06309</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>XboxStandbyFukker_2_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>XboxStandbyFukker_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -92,7 +92,6 @@
     <None Include="install.cmd">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Include="XboxStandbyFukker_2_TemporaryKey.pfx" />
     <None Include="XboxStandbyFukker_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

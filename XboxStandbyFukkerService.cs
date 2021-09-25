@@ -19,10 +19,11 @@ namespace XboxStandbyFukker
         private const string HELPER_ARGS = "-f \"%d;%ws\"";
 
         private static readonly string AUDIO_PATH = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "sound.wav");
-        private static readonly TimeSpan INTERVAL = new TimeSpan(0, 0, 3, 0);
+        private static readonly TimeSpan INTERVAL = TimeSpan.ParseExact(ConfigurationManager.AppSettings["Interval"], @"hh\:mm\:ss", System.Globalization.CultureInfo.InvariantCulture);
         private static readonly string HELPER_PATH = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "helper.exe");
         private static readonly string DEVICE_NAME_COMPARER = ConfigurationManager.AppSettings["DeviceName"].ToLower();
         private static readonly bool WRITE_LOGS = bool.Parse(ConfigurationManager.AppSettings["WriteLogs"]);
+        private static readonly double VOLUME = double.Parse(ConfigurationManager.AppSettings["Volume"], System.Globalization.CultureInfo.InvariantCulture);
         private static readonly ProcessStartInfo PROCESS_START_INTO = new ProcessStartInfo()
         {
             UseShellExecute = false,
@@ -43,8 +44,12 @@ namespace XboxStandbyFukker
 
             _log.Source = EVENT_SOURCE;
             _log.Log = EVENT_LOG;
+            _log.WriteEntry($"Running Xbox Standby Fukker with interval: {INTERVAL:hh\\:mm\\:ss} (hh:mm:ss)");
 
-            IsHeadsetConnected();
+            if (IsHeadsetConnected())
+            {
+                PlaySound();
+            }
 
             InitializeComponent();
         }
@@ -63,7 +68,7 @@ namespace XboxStandbyFukker
             }
             var player = new MediaPlayer();
             player.Open(new Uri(AUDIO_PATH));
-            player.Volume = 0.02;
+            player.Volume = VOLUME;
             player.Play();
         }
         private void Check(object sender, ElapsedEventArgs e)
